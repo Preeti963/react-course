@@ -32,4 +32,4 @@ function Counter(){
             Clicked{count} times
         </button>
     );
-}
+} 
