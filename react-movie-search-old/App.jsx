@@ -3,6 +3,8 @@ import {useState} from "react";
 function App(){
     const[query, setQuery] = useState("");
     const[movies, setMovies]= useState([]);
+    const [searched, setSearched] = useState(false);
+
     
     const API_KEY = "YOUR_KEY";
     
@@ -24,6 +26,19 @@ function App(){
             placeholder="Enter movie name"
             />
             <button onClick={searchMovie}>Search</button>
+
+        {/* Conditional Rendering */}
+      {movies.length > 0 && (
+        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+          {movies.map((movie) => (
+            <MovieCard key={movie.imdbID} movie={movie} />
+          ))}
         </div>
+      )}
+
+      {searched && movies.length === 0 && (
+        <p>No movies found 😕</p>
+      )}
+    </div>
     );
 }
