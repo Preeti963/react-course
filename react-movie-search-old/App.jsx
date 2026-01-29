@@ -1,44 +1,52 @@
-import {useState} from "react";
+import { useState } from "react";
 
-function App(){
-    const[query, setQuery] = useState("");
-    const[movies, setMovies]= useState([]);
-    const [searched, setSearched] = useState(false);
+const API_KEY = "296607b2";
 
-    
-    const API_KEY = "YOUR_KEY";
-    
-    const searchMovie = async ()=>{
-        const res = await fetch(
-            `https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`
-        );
-        const data = await res.json();
-        console.log(data);
-        setMovies(data.Search || []);
-    };
-    return(
-        <div>
-            <h1>Movie Search App</h1>
-            <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter movie name"
-            />
-            <button onClick={searchMovie}>Search</button>
+function App() {
+  const [query, setQuery] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-        {/* Conditional Rendering */}
-      {movies.length > 0 && (
-        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-          {movies.map((movie) => (
-            <MovieCard key={movie.imdbID} movie={movie} />
-          ))}
-        </div>
-      )}
+  const searchMovie = async () => {
+    if (!query) return;
 
-      {searched && movies.length === 0 && (
-        <p>No movies found 😕</p>
-      )}
-    </div>
+    setLoading(true);
+    setMovies([]);
+
+    const res = await fetch(
+      `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`
     );
+    const data = await res.json();
+
+    setMovies(data.Search || []);
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>🎬 Movie Search App</h1>
+
+      <input
+        type="text"
+        placeholder="Search movie..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <button onClick={searchMovie}>Search</button>
+
+      {loading && <p>Loading...</p>}
+      {!loading && movies.length === 0 && <p>No movies found</p>}
+
+      <div style={{ display: "flex", gap: "10px", marginTop: "20px", flexWrap: "wrap" }}>
+        {movies.map((movie) => (
+          <div key={movie.imdbID}>
+            <img src={movie.Poster} width="150" />
+            <p>{movie.Title}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
+
+export default App;
